@@ -14,7 +14,7 @@ import java.util.List;
 
 import static ru.practicum.moviehub.api.ErrorResponse.*;
 
-public class MoviesHandler extends BaseHttpHandler { // Расширьте базовый класс BaseHttpHandler
+public class MoviesHandler extends BaseHttpHandler {
     MoviesStore moviesStore = new MoviesStore();
     Gson gson = new Gson();
 
@@ -22,7 +22,6 @@ public class MoviesHandler extends BaseHttpHandler { // Расширьте ба�
     public void handle(HttpExchange ex) throws IOException {
         String method = ex.getRequestMethod();
         if (method.equalsIgnoreCase("GET")) {
-            // Напишите реализацию с использованием метода sendJson
             String path = ex.getRequestURI().getPath();
             if (path.equals("/movies")) {
                 String query = ex.getRequestURI().getQuery();

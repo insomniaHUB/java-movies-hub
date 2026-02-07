@@ -12,10 +12,7 @@ public class MoviesServer {
     public MoviesServer() {
         try {
             server = HttpServer.create(new InetSocketAddress(PORT), 0);
-
-            // Добавьте контекст для /movies и укажите созданный хендлер
             server.createContext("/movies", new MoviesHandler());
-
         } catch (IOException e) {
             throw new RuntimeException("Не удалось создать HTTP-сервер", e);
         }

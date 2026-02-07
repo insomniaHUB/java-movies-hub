@@ -11,9 +11,6 @@ import java.nio.charset.StandardCharsets;
 
 
 public class ErrorResponse {
-    private String error;
-    private String details;
-
 
     public static void sendValidationError(HttpExchange ex, int status, String error, String[] details) throws IOException {
         JsonObject jsonObject = new JsonObject();
@@ -75,33 +72,5 @@ public class ErrorResponse {
         try (OutputStream os = ex.getResponseBody()) {
             os.write(bytes);
         }
-    }
-
-//    private static void sendJsonError(HttpExchange ex, int status, JsonObject jsonObject) throws IOException {
-//        String response = new Gson().toJson(jsonObject);
-//        byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
-//
-//        ex.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
-//        ex.sendResponseHeaders(status, bytes.length);
-//
-//        try (OutputStream os = ex.getResponseBody()) {
-//            os.write(bytes);
-//        }
-//    }
-
-    private String getError() {
-        return error;
-    }
-
-    private void setError(String error) {
-        this.error = error;
-    }
-
-    private String getDetails() {
-        return details;
-    }
-
-    private void setDetails(String details) {
-        this.details = details;
     }
 }

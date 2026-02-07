@@ -141,7 +141,7 @@ public class MoviesApiTest {
         HttpResponse<String> resp =
                 client.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 
-        assertEquals(422, resp.statusCode(), "POST /movies должен вернуть 201");
+        assertEquals(422, resp.statusCode());
         JsonObject responseJson = JsonParser.parseString(resp.body()).getAsJsonObject();
 
         String error = responseJson.get("error").getAsString();
@@ -178,7 +178,7 @@ public class MoviesApiTest {
         HttpResponse<String> resp =
                 client.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 
-        assertEquals(422, resp.statusCode(), "POST /movies должен вернуть 201");
+        assertEquals(422, resp.statusCode());
 
         JsonObject responseJson = JsonParser.parseString(resp.body()).getAsJsonObject();
 
@@ -216,7 +216,7 @@ public class MoviesApiTest {
         HttpResponse<String> resp =
                 client.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 
-        assertEquals(422, resp.statusCode(), "POST /movies должен вернуть 201");
+        assertEquals(422, resp.statusCode());
 
         JsonObject responseJson = JsonParser.parseString(resp.body()).getAsJsonObject();
 
@@ -235,7 +235,7 @@ public class MoviesApiTest {
             }
         }
 
-        assertTrue(found, "Должна быть ошибка 'Неправильная длина названия фильма'");
+        assertTrue(found, "Должна быть ошибка 'Некорректный год выпуска фильма'");
     }
 
     @Test
@@ -249,7 +249,7 @@ public class MoviesApiTest {
         HttpResponse<String> resp =
                 client.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 
-        assertEquals(400, resp.statusCode(), "POST /movies должен вернуть 201");
+        assertEquals(400, resp.statusCode());
     }
 
     @Test
@@ -268,7 +268,7 @@ public class MoviesApiTest {
         HttpResponse<String> resp =
                 client.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 
-        assertEquals(200, resp.statusCode(), "GET /movies должен вернуть 200");
+        assertEquals(200, resp.statusCode(), "GET /movies/{id} должен вернуть 200");
 
         String contentTypeHeaderValue =
                 resp.headers().firstValue("Content-Type").orElse("");
@@ -296,7 +296,7 @@ public class MoviesApiTest {
         HttpResponse<String> resp =
                 client.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 
-        assertEquals(404, resp.statusCode(), "GET /movies должен вернуть 200");
+        assertEquals(404, resp.statusCode());
 
         String contentTypeHeaderValue =
                 resp.headers().firstValue("Content-Type").orElse("");
@@ -325,7 +325,7 @@ public class MoviesApiTest {
         HttpResponse<String> resp =
                 client.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 
-        assertEquals(400, resp.statusCode(), "GET /movies должен вернуть 200");
+        assertEquals(400, resp.statusCode());
 
         String contentTypeHeaderValue =
                 resp.headers().firstValue("Content-Type").orElse("");
@@ -354,7 +354,7 @@ public class MoviesApiTest {
         HttpResponse<String> resp =
                 client.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 
-        assertEquals(204, resp.statusCode(), "GET /movies должен вернуть 200");
+        assertEquals(204, resp.statusCode(), "delete /movies/{id} должен вернуть 204");
         assertEquals(1, moviesStore.getMovieList().size());
     }
 
@@ -373,7 +373,7 @@ public class MoviesApiTest {
         HttpResponse<String> resp =
                 client.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 
-        assertEquals(404, resp.statusCode(), "GET /movies должен вернуть 200");
+        assertEquals(404, resp.statusCode());
         assertEquals(2, moviesStore.getMovieList().size());
     }
 
@@ -392,7 +392,7 @@ public class MoviesApiTest {
         HttpResponse<String> resp =
                 client.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 
-        assertEquals(400, resp.statusCode(), "GET /movies должен вернуть 200");
+        assertEquals(400, resp.statusCode());
         assertEquals(2, moviesStore.getMovieList().size());
     }
 
@@ -414,7 +414,7 @@ public class MoviesApiTest {
         HttpResponse<String> resp =
                 client.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 
-        assertEquals(200, resp.statusCode(), "GET /movies должен вернуть 200");
+        assertEquals(200, resp.statusCode(), "GET /movies?year=YYYY должен вернуть 200");
 
         String contentTypeHeaderValue =
                 resp.headers().firstValue("Content-Type").orElse("");
@@ -445,7 +445,7 @@ public class MoviesApiTest {
         HttpResponse<String> resp =
                 client.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 
-        assertEquals(200, resp.statusCode(), "GET /movies должен вернуть 200");
+        assertEquals(200, resp.statusCode(), "GET /movies?year= должен вернуть 200");
 
         String contentTypeHeaderValue =
                 resp.headers().firstValue("Content-Type").orElse("");
@@ -473,7 +473,7 @@ public class MoviesApiTest {
         HttpResponse<String> resp =
                 client.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 
-        assertEquals(400, resp.statusCode(), "GET /movies должен вернуть 200");
+        assertEquals(400, resp.statusCode());
     }
 
 }
