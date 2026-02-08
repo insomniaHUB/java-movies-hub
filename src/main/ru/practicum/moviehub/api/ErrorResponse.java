@@ -1,76 +1,30 @@
 package ru.practicum.moviehub.api;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.sun.net.httpserver.HttpExchange;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-
+import java.util.List;
 
 public class ErrorResponse {
+    private int errorCode;
+    private String message;
+    List<String> errors;
 
-    public static void sendValidationError(HttpExchange ex, int status, String error, String[] details) throws IOException {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("error", error);
-
-        JsonArray detailsArray = new JsonArray();
-        for (String detail : details) {
-            detailsArray.add(detail);
-        }
-        jsonObject.add("details", detailsArray);
-
-        Gson gson = new Gson();
-        String response = gson.toJson(jsonObject);
-        byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
-
-        ex.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
-        ex.sendResponseHeaders(status, bytes.length);
-
-        try (OutputStream os = ex.getResponseBody()) {
-            os.write(bytes);
-        }
+    public ErrorResponse(int errorCode, String message) {
+        this.errorCode = errorCode;
+        this.message = message;
     }
 
-    public static void sendUnsupportedMediaType(HttpExchange ex) throws IOException {
-        ex.sendResponseHeaders(415, -1);
+    public int getErrorCode() {
+        return errorCode;
     }
 
-    public static void sendBadRequest(HttpExchange ex) throws IOException {
-        ex.sendResponseHeaders(400, -1);
+    public String getMessage() {
+        return message;
     }
 
-    public static void sendNotFoundRequest(HttpExchange ex, int status, String error) throws IOException {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("error", error);
-
-        Gson gson = new Gson();
-        String response = gson.toJson(jsonObject);
-        byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
-
-        ex.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
-        ex.sendResponseHeaders(status, bytes.length);
-
-        try (OutputStream os = ex.getResponseBody()) {
-            os.write(bytes);
-        }
+    public List<String> getErrors() {
+        return errors;
     }
 
-    public static void sendNotNumberRequest(HttpExchange ex, int status, String error) throws IOException {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("error", error);
-
-        Gson gson = new Gson();
-        String response = gson.toJson(jsonObject);
-        byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
-
-        ex.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
-        ex.sendResponseHeaders(status, bytes.length);
-
-        try (OutputStream os = ex.getResponseBody()) {
-            os.write(bytes);
-        }
+    public void setErrors(List<String> errors) {
+        this.errors = errors;
     }
 }

@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class MoviesApiTest {
     private static final String BASE = "http://localhost:8080";
+    private static final String pathURL = "/movies";
     private static MoviesServer server;
     private static HttpClient client;
     private MoviesStore moviesStore = new MoviesStore();
@@ -51,7 +52,7 @@ public class MoviesApiTest {
     @Test
     void getMovies_whenEmpty_returnsEmptyArray() throws Exception {
         HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(BASE + "/movies"))
+                .uri(URI.create(BASE + pathURL))
                 .GET()
                 .build();
 
@@ -77,7 +78,7 @@ public class MoviesApiTest {
         Gson gson = new Gson();
 
         HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(BASE + "/movies"))
+                .uri(URI.create(BASE + pathURL))
                 .GET()
                 .build();
 
@@ -105,7 +106,7 @@ public class MoviesApiTest {
         Gson gson = new Gson();
 
         HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(BASE + "/movies"))
+                .uri(URI.create(BASE + pathURL))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .build();
@@ -133,7 +134,7 @@ public class MoviesApiTest {
         String jsonBody = jsonObject.toString();
 
         HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(BASE + "/movies"))
+                .uri(URI.create(BASE + pathURL))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .build();
@@ -170,7 +171,7 @@ public class MoviesApiTest {
         String jsonBody = jsonObject.toString();
 
         HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(BASE + "/movies"))
+                .uri(URI.create(BASE + pathURL))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .build();
@@ -208,7 +209,7 @@ public class MoviesApiTest {
         String jsonBody = jsonObject.toString();
 
         HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(BASE + "/movies"))
+                .uri(URI.create(BASE + pathURL))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .build();
@@ -241,7 +242,7 @@ public class MoviesApiTest {
     @Test
     void postMovies_UnsupportedMediaTypeError() throws Exception {
         HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(BASE + "/movies"))
+                .uri(URI.create(BASE + pathURL))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(""))
                 .build();
@@ -261,7 +262,7 @@ public class MoviesApiTest {
         Gson gson = new Gson();
 
         HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(BASE + "/movies/2"))
+                .uri(URI.create(BASE + pathURL + "/2"))
                 .GET()
                 .build();
 
@@ -289,7 +290,7 @@ public class MoviesApiTest {
         moviesStore.addMovie(movieTwo);
 
         HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(BASE + "/movies/3"))
+                .uri(URI.create(BASE + pathURL + "/3"))
                 .GET()
                 .build();
 
@@ -318,7 +319,7 @@ public class MoviesApiTest {
         moviesStore.addMovie(movieTwo);
 
         HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(BASE + "/movies/three"))
+                .uri(URI.create(BASE + pathURL + "/three"))
                 .GET()
                 .build();
 
@@ -347,7 +348,7 @@ public class MoviesApiTest {
         moviesStore.addMovie(movieTwo);
 
         HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(BASE + "/movies/2"))
+                .uri(URI.create(BASE + pathURL + "/2"))
                 .DELETE()
                 .build();
 
@@ -385,7 +386,7 @@ public class MoviesApiTest {
         moviesStore.addMovie(movieTwo);
 
         HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(BASE + "/movies/two"))
+                .uri(URI.create(BASE + pathURL + "/two"))
                 .DELETE()
                 .build();
 
@@ -407,7 +408,7 @@ public class MoviesApiTest {
         Gson gson = new Gson();
 
         HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(BASE + "/movies?year=2014"))
+                .uri(URI.create(BASE + pathURL + "?year=2014"))
                 .GET()
                 .build();
 
@@ -438,7 +439,7 @@ public class MoviesApiTest {
         Gson gson = new Gson();
 
         HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(BASE + "/movies?year=2016"))
+                .uri(URI.create(BASE + pathURL + "?year=2016"))
                 .GET()
                 .build();
 
@@ -466,7 +467,7 @@ public class MoviesApiTest {
         moviesStore.addMovie(movieThree);
 
         HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(BASE + "/movies?year=twentysixteen"))
+                .uri(URI.create(BASE + pathURL + "?year=twentysixteen"))
                 .GET()
                 .build();
 
@@ -474,6 +475,20 @@ public class MoviesApiTest {
                 client.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 
         assertEquals(400, resp.statusCode());
+    }
+
+    @Test
+    void badRequestMethod() throws Exception {
+        HttpRequest req = HttpRequest.newBuilder()
+                .uri(URI.create(BASE + pathURL))
+                .header("Content-Type", "application/json")
+                .PUT(HttpRequest.BodyPublishers.ofString(""))
+                .build();
+
+        HttpResponse<String> resp =
+                client.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+
+        assertEquals(405, resp.statusCode());
     }
 
 }
