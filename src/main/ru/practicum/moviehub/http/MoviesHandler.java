@@ -122,7 +122,7 @@ public class MoviesHandler extends BaseHttpHandler {
         }
     }
 
-    private void handleDeleteMethod (HttpExchange ex) throws IOException {
+    private void handleDeleteMethod(HttpExchange ex) throws IOException {
         String idStr = ex.getRequestURI().getPath().substring((pathURL + "/").length());
         try {
             int id = Integer.parseInt(idStr);
@@ -139,5 +139,4 @@ public class MoviesHandler extends BaseHttpHandler {
             sendNotNumberRequest(ex, errorResponse);
         }
     }
-
 }
