@@ -5,12 +5,10 @@ import java.util.Objects;
 public class Movie {
     private final String title;
     private final int year;
-    private final int id;
 
-    public Movie(String title, int year, int id) {
+    public Movie(String title, int year) {
         this.title = title;
         this.year = year;
-        this.id = id;
     }
 
     public int getYear() {
@@ -19,10 +17,6 @@ public class Movie {
 
     public String getTitle() {
         return title;
-    }
-
-    public int getId() {
-        return id;
     }
 
     @Override

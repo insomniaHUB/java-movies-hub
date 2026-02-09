@@ -4,39 +4,46 @@ import ru.practicum.moviehub.model.Movie;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 public class MoviesStore {
-    private static List<Movie> movieList;
+    private final Map<Integer, Movie> movieList;
 
     public MoviesStore() {
-        movieList = new ArrayList<>();
+        movieList = new HashMap();
     }
 
-    public void addMovie(Movie movie) {
-        movieList.add(movie);
+    public void addMovie(int id, Movie movie) {
+        movieList.put(id, movie);
     }
 
     public Movie getMovie(int id) {
-        return movieList.stream()
-                .filter(movie -> movie.getId() == id)
-                .findFirst()
-                .orElse(null);
+        return movieList.get(id);
     }
 
-    public void deleteMovie(Movie movie) throws IOException {
-        movieList.remove(movie);
+    public Map<Integer, Movie> getMovieMap() {
+        return movieList;
+    }
+
+    public void deleteMovie(int id) throws IOException {
+        movieList.remove(id);
     }
 
     public List<Movie> getMovieListByYear(int year) {
-        return movieList.stream()
-                .filter(movie -> movie.getYear() == year)
-                .collect(Collectors.toList());
+        List<Movie> movieByYear = new ArrayList<>();
+        for (Integer id : movieList.keySet()) {
+            if (movieList.get(id).getYear() == year) {
+                movieByYear.add(movieList.get(id));
+            }
+        }
+        return movieByYear;
     }
 
     public List<Movie> getMovieList() {
-        return movieList;
+        List<Movie> allMovies = new ArrayList<>(movieList.values());
+        return allMovies;
     }
 
     public void clearMovieList() {

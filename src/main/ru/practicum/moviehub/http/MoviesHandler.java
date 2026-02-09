@@ -6,15 +6,15 @@ import com.google.gson.JsonParser;
 import com.sun.net.httpserver.HttpExchange;
 import ru.practicum.moviehub.api.ErrorResponse;
 import ru.practicum.moviehub.model.Movie;
-import ru.practicum.moviehub.store.MoviesStore;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import static ru.practicum.moviehub.http.MoviesServer.getMoviesStore;
+
 public class MoviesHandler extends BaseHttpHandler {
-    MoviesStore moviesStore = new MoviesStore();
     Gson gson = new Gson();
     private static final String pathURL = "/movies";
 
@@ -45,20 +45,20 @@ public class MoviesHandler extends BaseHttpHandler {
                 try {
                     String yearStr = query.substring("year=".length());
                     int year = Integer.parseInt(yearStr);
-                    List<Movie> movieListByYear = moviesStore.getMovieListByYear(year);
+                    List<Movie> movieListByYear = getMoviesStore().getMovieListByYear(year);
                     sendJson(ex, 200, gson.toJson(movieListByYear));
                 } catch (NumberFormatException e) {
                     ErrorResponse errorResponse = new ErrorResponse(400, "Некорректный год");
                     sendNotNumberRequest(ex, errorResponse);
                 }
             } else {
-                sendJson(ex, 200, gson.toJson(moviesStore.getMovieList()));
+                sendJson(ex, 200, gson.toJson(getMoviesStore().getMovieList()));
             }
         } else if (path.startsWith(pathURL + "/")) {
             String idStr = path.substring((pathURL + "/").length());
             try {
                 int id = Integer.parseInt(idStr);
-                Movie movie = moviesStore.getMovie(id);
+                Movie movie = getMoviesStore().getMovie(id);
                 if (movie != null) {
                     sendJson(ex, 200, gson.toJson(movie));
                 } else {
@@ -113,8 +113,8 @@ public class MoviesHandler extends BaseHttpHandler {
                 return;
             }
 
-            Movie movie = new Movie(title, year, moviesStore.getMovieList().size() + 1);
-            moviesStore.addMovie(movie);
+            Movie movie = new Movie(title, year);
+            getMoviesStore().addMovie(getMoviesStore().getMovieList().size() + 1, movie);
             sendJson(ex, 201, gson.toJson(movie));
 
         } catch (Exception e) {
@@ -126,9 +126,9 @@ public class MoviesHandler extends BaseHttpHandler {
         String idStr = ex.getRequestURI().getPath().substring((pathURL + "/").length());
         try {
             int id = Integer.parseInt(idStr);
-            Movie movie = moviesStore.getMovie(id);
+            Movie movie = getMoviesStore().getMovie(id);
             if (movie != null) {
-                moviesStore.deleteMovie(movie);
+                getMoviesStore().deleteMovie(id);
                 sendNoContent(ex);
             } else {
                 ErrorResponse errorResponse = new ErrorResponse(404, "Фильм не найден");
