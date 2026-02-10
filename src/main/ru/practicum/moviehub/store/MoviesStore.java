@@ -33,9 +33,9 @@ public class MoviesStore {
 
     public List<Movie> getMovieListByYear(int year) {
         List<Movie> movieByYear = new ArrayList<>();
-        for (Integer id : movieList.keySet()) {
-            if (movieList.get(id).getYear() == year) {
-                movieByYear.add(movieList.get(id));
+        for (Movie movie : movieList.values()) {
+            if (movie.getYear() == year) {
+                movieByYear.add(movie);
             }
         }
         return movieByYear;

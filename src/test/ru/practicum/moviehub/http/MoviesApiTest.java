@@ -26,10 +26,11 @@ public class MoviesApiTest {
     private static final String pathURL = "/movies";
     private static MoviesServer server;
     private static HttpClient client;
+    private static MoviesStore moviesStore = new MoviesStore();
 
     @BeforeAll
     static void beforeAll() {
-        server = new MoviesServer(new MoviesStore());
+        server = new MoviesServer(moviesStore);
         server.start();
         client = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(2))
@@ -38,7 +39,7 @@ public class MoviesApiTest {
 
     @BeforeEach
     void beforeEach() {
-        server.getMoviesStore().clearMovieList();
+        moviesStore.clearMovieList();
     }
 
     @AfterAll
@@ -73,8 +74,9 @@ public class MoviesApiTest {
     @Test
     void getMovies_whenNotEmpty_returnsMoviesArray() throws Exception {
         Movie movie = new Movie("Зеленая книга", 2019);
-        server.getMoviesStore().addMovie(1, movie);
+        moviesStore.addMovie(1, movie);
         Gson gson = new Gson();
+
 
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + pathURL))
@@ -122,7 +124,7 @@ public class MoviesApiTest {
 
         Movie newMovie = gson.fromJson(resp.body(), Movie.class);
         assertEquals("Зеленая книга", newMovie.getTitle());
-        assertEquals(1, server.getMoviesStore().getMovieList().size());
+        assertEquals(1, moviesStore.getMovieList().size());
     }
 
     @Test
@@ -256,8 +258,8 @@ public class MoviesApiTest {
     void getMoviesById_returnsMovie() throws Exception {
         Movie movieOne = new Movie("Зеленая книга", 2019);
         Movie movieTwo = new Movie("Интерстеллар", 2014);
-        server.getMoviesStore().addMovie(1, movieOne);
-        server.getMoviesStore().addMovie(2, movieTwo);
+        moviesStore.addMovie(1, movieOne);
+        moviesStore.addMovie(2, movieTwo);
         Gson gson = new Gson();
 
         HttpRequest req = HttpRequest.newBuilder()
@@ -281,8 +283,8 @@ public class MoviesApiTest {
 
         int idResponseMovie = -1;
 
-        for (Integer id : server.getMoviesStore().getMovieMap().keySet()) {
-            if (server.getMoviesStore().getMovieMap().get(id).equals(responseMovie)) {
+        for (Integer id : moviesStore.getMovieMap().keySet()) {
+            if (moviesStore.getMovieMap().get(id).equals(responseMovie)) {
                 idResponseMovie = id;
                 break;
             }
@@ -295,8 +297,8 @@ public class MoviesApiTest {
     void getMoviesById_returnsNotFound() throws Exception {
         Movie movieOne = new Movie("Зеленая книга", 2019);
         Movie movieTwo = new Movie("Интерстеллар", 2014);
-        server.getMoviesStore().addMovie(1, movieOne);
-        server.getMoviesStore().addMovie(2, movieTwo);
+        moviesStore.addMovie(1, movieOne);
+        moviesStore.addMovie(2, movieTwo);
 
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + pathURL + "/3"))
@@ -324,8 +326,8 @@ public class MoviesApiTest {
     void getMoviesById_returnsNotNumber() throws Exception {
         Movie movieOne = new Movie("Зеленая книга", 2019);
         Movie movieTwo = new Movie("Интерстеллар", 2014);
-        server.getMoviesStore().addMovie(1, movieOne);
-        server.getMoviesStore().addMovie(2, movieTwo);
+        moviesStore.addMovie(1, movieOne);
+        moviesStore.addMovie(2, movieTwo);
 
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + pathURL + "/three"))
@@ -353,8 +355,8 @@ public class MoviesApiTest {
     void deleteMoviesById() throws Exception {
         Movie movieOne = new Movie("Зеленая книга", 2019);
         Movie movieTwo = new Movie("Интерстеллар", 2014);
-        server.getMoviesStore().addMovie(1, movieOne);
-        server.getMoviesStore().addMovie(2, movieTwo);
+        moviesStore.addMovie(1, movieOne);
+        moviesStore.addMovie(2, movieTwo);
 
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + pathURL + "/2"))
@@ -365,15 +367,15 @@ public class MoviesApiTest {
                 client.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 
         assertEquals(204, resp.statusCode(), "delete /movies/{id} должен вернуть 204");
-        assertEquals(1, server.getMoviesStore().getMovieList().size());
+        assertEquals(1, moviesStore.getMovieList().size());
     }
 
     @Test
     void deleteMoviesById_NotFound() throws Exception {
         Movie movieOne = new Movie("Зеленая книга", 2019);
         Movie movieTwo = new Movie("Интерстеллар", 2014);
-        server.getMoviesStore().addMovie(1, movieOne);
-        server.getMoviesStore().addMovie(2, movieTwo);
+        moviesStore.addMovie(1, movieOne);
+        moviesStore.addMovie(2, movieTwo);
 
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + "/movies/3"))
@@ -384,15 +386,15 @@ public class MoviesApiTest {
                 client.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 
         assertEquals(404, resp.statusCode());
-        assertEquals(2, server.getMoviesStore().getMovieList().size());
+        assertEquals(2, moviesStore.getMovieList().size());
     }
 
     @Test
     void deleteMoviesById_NotNumberId() throws Exception {
         Movie movieOne = new Movie("Зеленая книга", 2019);
         Movie movieTwo = new Movie("Интерстеллар", 2014);
-        server.getMoviesStore().addMovie(1, movieOne);
-        server.getMoviesStore().addMovie(2, movieTwo);
+        moviesStore.addMovie(1, movieOne);
+        moviesStore.addMovie(2, movieTwo);
 
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + pathURL + "/two"))
@@ -403,7 +405,7 @@ public class MoviesApiTest {
                 client.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 
         assertEquals(400, resp.statusCode());
-        assertEquals(2, server.getMoviesStore().getMovieList().size());
+        assertEquals(2, moviesStore.getMovieList().size());
     }
 
     @Test
@@ -411,9 +413,9 @@ public class MoviesApiTest {
         Movie movieOne = new Movie("Зеленая книга", 2019);
         Movie movieTwo = new Movie("Интерстеллар", 2014);
         Movie movieThree = new Movie("Стражи Галактики", 2014);
-        server.getMoviesStore().addMovie(1, movieOne);
-        server.getMoviesStore().addMovie(2, movieTwo);
-        server.getMoviesStore().addMovie(3, movieThree);
+        moviesStore.addMovie(1, movieOne);
+        moviesStore.addMovie(2, movieTwo);
+        moviesStore.addMovie(3, movieThree);
         Gson gson = new Gson();
 
         HttpRequest req = HttpRequest.newBuilder()
@@ -442,9 +444,9 @@ public class MoviesApiTest {
         Movie movieOne = new Movie("Зеленая книга", 2019);
         Movie movieTwo = new Movie("Интерстеллар", 2014);
         Movie movieThree = new Movie("Стражи Галактики", 2014);
-        server.getMoviesStore().addMovie(1, movieOne);
-        server.getMoviesStore().addMovie(2,movieTwo);
-        server.getMoviesStore().addMovie(3, movieThree);
+        moviesStore.addMovie(1, movieOne);
+        moviesStore.addMovie(2,movieTwo);
+        moviesStore.addMovie(3, movieThree);
         Gson gson = new Gson();
 
         HttpRequest req = HttpRequest.newBuilder()
@@ -471,9 +473,9 @@ public class MoviesApiTest {
         Movie movieOne = new Movie("Зеленая книга", 2019);
         Movie movieTwo = new Movie("Интерстеллар", 2014);
         Movie movieThree = new Movie("Стражи Галактики", 2014);
-        server.getMoviesStore().addMovie(1, movieOne);
-        server.getMoviesStore().addMovie(2, movieTwo);
-        server.getMoviesStore().addMovie(3, movieThree);
+        moviesStore.addMovie(1, movieOne);
+        moviesStore.addMovie(2, movieTwo);
+        moviesStore.addMovie(3, movieThree);
 
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + pathURL + "?year=twentysixteen"))
